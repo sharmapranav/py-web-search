@@ -47,7 +47,7 @@ Python2: Not available on PyPI at the moment. You can download this repository a
     # query: Required. The keyword that will be searched.
     # num: Default 10. The number of results returned.
     # start: Default 0. The number of top results that are to be ignored.
-    # sleep: Default True. If True, the program will wait for a second, when applicable, to avoid overwhelming the servers.
+    # sleep: Default 1. The program will wait for a second, when applicable, to avoid overwhelming the servers.
     # recent: Default None. The following values are allowed: 'h': hour, 'd': day, 'w': week, 'm': month and 'y': year.(Buggy)
     # country_code: For local results.
 ```
@@ -84,15 +84,15 @@ Prints 5 results from the the third result onwards (ignores the first 2) in the 
     from pws import Bing
     from pws import Google
 
-    print(Bing.search_news(query='github', 10, 0, True, 'h'))
-    print(Google.search_news('github', 10, 0, True, 'd', "es"))
+    print(Bing.search_news(query='github', 10, 0, 1, 'h'))
+    print(Google.search_news('github', 10, 0, 1, 'd', "es"))
     
     # Arguments:
     # search_news(query, num, start, sleep, recent)
     # query: Required. The keyword that will be searched.
     # num: Default 10. The number of results returned.
     # start: Default 0. The number of top results that are to be ignored.
-    # sleep: Default True. If True, the program will wait for a second, when applicable, to avoid overwhelming the servers.
+    # sleep: Default 1. The program will wait for a second, when applicable, to avoid overwhelming the servers.
     # recent: Default None. The following values are allowed: 'h': hour, 'd': day, 'w': week, 'm': month and 'y': year.(Buggy)
     # country_code: For local results. 
 ```

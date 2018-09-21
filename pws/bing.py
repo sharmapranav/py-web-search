@@ -81,7 +81,7 @@ def try_cast_int(s):
 
 class Bing:
     @staticmethod
-    def search(query, num=10, start=0, sleep=True, recent=None, country_code=None):
+    def search(query, num=10, start=0, sleep=1, recent=None, country_code=None):
         results = []
         _start = start # Remembers the initial value of start for later use
         _url = None
@@ -89,8 +89,8 @@ class Bing:
         total_results = None
 
         while len(results) < num:
-            if sleep: # Prevents loading too many pages too soon
-                wait(1)
+            # Prevents loading too many pages too soon
+            wait(sleep)
             url = generate_url(query, str(start), recent, country_code)
             if _url is None:
                 _url = url # Remembers the first url that is generated
@@ -168,13 +168,13 @@ class Bing:
         return results
 
     @staticmethod
-    def search_news(query, num=10, start=0, sleep=True, recent=None, country_code=None):
+    def search_news(query, num=10, start=0, sleep=1, recent=None, country_code=None):
         results = []
         _start = start # Remembers the initial value of start for later use
         _url = None
         while len(results) < num:
-            if sleep: # Prevents loading too many pages too soon
-                wait(1)
+            # Prevents loading too many pages too soon
+            wait(sleep)
             url = generate_news_url(query, str(start), recent, country_code)
             if _url is None:
                 _url = url # Remembers the first url that is generated

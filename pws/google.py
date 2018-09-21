@@ -84,9 +84,9 @@ def try_cast_int(s):
 
 class Google:
     @staticmethod
-    def search(query, num=10, start=0, sleep=True, recent=None, country_code=None):
-        if sleep:
-            wait(1)
+    def search(query, num=10, start=0, sleep=1, recent=None, country_code=None):
+        # Prevents loading too many pages too soon
+        wait(sleep)
         url = generate_url(query, str(num), str(start), recent, country_code)
         soup = BeautifulSoup(requests.get(url).text, "html.parser")
         results = Google.scrape_search_result(soup)
@@ -152,9 +152,9 @@ class Google:
         return related_queries
 
     @staticmethod
-    def search_news(query, num=10, start=0,sleep=True, recent=None, country_code=None, proxies=None):
-        if sleep:
-            wait(1)
+    def search_news(query, num=10, start=0, sleep=1, recent=None, country_code=None, proxies=None):
+        # Prevents loading too many pages too soon
+        wait(sleep)
         url = generate_news_url(query, str(num), str(start), recent, country_code)
         soup = BeautifulSoup(requests.get(url,proxies).text, "html.parser")
         results = Google.scrape_news_result(soup)
