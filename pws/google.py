@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 from time import sleep as wait
 import re
-import requests
+from requests_html import HTMLSession
 
 try:
     from html.parser import HTMLParser
@@ -15,7 +15,7 @@ except ImportError:
 ##################################################
 
 class MLStripper(HTMLParser):
-    # Code copied from StackOverflow http://stackoverflow.com/a/925630/3664835
+    # Code copied from StackOverflow https://stackoverflow.com/a/925630/3664835
     def __init__(self):
         self.reset()
         self.strict = False
@@ -27,7 +27,7 @@ class MLStripper(HTMLParser):
         return ''.join(self.fed)
 
 def strip_tags(html):
-    # Code copied from StackOverflow http://stackoverflow.com/a/925630/3664835
+    # Code copied from StackOverflow https://stackoverflow.com/a/925630/3664835
     s = MLStripper()
     s.feed(html)
     return ' '.join(s.get_data().split())
@@ -88,7 +88,8 @@ class Google:
         # Prevents loading too many pages too soon
         wait(sleep)
         url = generate_url(query, str(num), str(start), recent, country_code)
-        soup = BeautifulSoup(requests.get(url).text, "html.parser")
+        session = HTMLSession()
+        soup = BeautifulSoup(session.get(url).html.html, "html.parser")
         results = Google.scrape_search_result(soup)
         related_queries = Google.scrape_related(soup)
 
@@ -156,7 +157,8 @@ class Google:
         # Prevents loading too many pages too soon
         wait(sleep)
         url = generate_news_url(query, str(num), str(start), recent, country_code)
-        soup = BeautifulSoup(requests.get(url,proxies).text, "html.parser")
+        session = HTMLSession()
+        soup = BeautifulSoup(session.get(url).html.html, "html.parser")
         results = Google.scrape_news_result(soup)
 
         raw_total_results = soup.find('div', attrs = {'class' : 'sd'}).string

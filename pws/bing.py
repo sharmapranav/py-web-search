@@ -3,7 +3,7 @@
 from bs4 import BeautifulSoup
 from time import sleep as wait
 import re
-import requests
+from requests_html import HTMLSession
 
 try:
     from html.parser import HTMLParser
@@ -15,7 +15,7 @@ except ImportError:
 ##################################################
 
 class MLStripper(HTMLParser):
-    # Code copied from StackOverflow http://stackoverflow.com/a/925630/3664835
+    # Code copied from StackOverflow https://stackoverflow.com/a/925630/3664835
     def __init__(self):
         self.reset()
         self.strict = False
@@ -27,7 +27,7 @@ class MLStripper(HTMLParser):
         return ''.join(self.fed)
 
 def strip_tags(html):
-    # Code copied from StackOverflow http://stackoverflow.com/a/925630/3664835
+    # Code copied from StackOverflow https://stackoverflow.com/a/925630/3664835
     s = MLStripper()
     s.feed(html)
     return ' '.join(s.get_data().split())
@@ -36,28 +36,28 @@ def strip_tags(html):
 # Helpers
 ##################################################
 
-# Best: http://www.bing.com/search?q=hello+world&first=9
-# Recent: http://www.bing.com/search?q=hello+world&filters=ex1%3a%22ez1%22
+# Best: https://www.bing.com/search?q=hello+world&first=9
+# Recent: https://www.bing.com/search?q=hello+world&filters=ex1%3a%22ez1%22
 def generate_url(query, first, recent, country_code):
     """(str, str) -> str
     A url in the required format is generated.
     """
     query = '+'.join(query.split())
-    url = 'http://www.bing.com/search?q=' + query + '&first=' + first
+    url = 'https://www.bing.com/search?q=' + query + '&first=' + first
     if recent in ['h', 'd', 'w', 'm', 'y']: # A True/False would be enough. This is just to maintain consistancy with google.
         url = url + '&filters=ex1%3a%22ez1%22'
     if country_code is not None:
         url += '&cc=' + country_code
     return url
 
-# Best: http://www.bing.com/news/search?q=hello+world&first=11
-# Recent: http://www.bing.com/news/search?q=hello+world&qft=sortbydate%3d%221%22
+# Best: https://www.bing.com/news/search?q=hello+world&first=11
+# Recent: https://www.bing.com/news/search?q=hello+world&qft=sortbydate%3d%221%22
 def generate_news_url(query, first, recent, country_code):
     """(str, str) -> str
     A url in the required format is generated.
     """
     query = '+'.join(query.split())
-    url = 'http://www.bing.com/news/search?q=' + query + '&first' + first
+    url = 'https://www.bing.com/news/search?q=' + query + '&first' + first
     if recent in ['h', 'd', 'w', 'm', 'y']: # A True/False would be enough. This is just to maintain consistancy with google.
         url = url + '&qft=sortbydate%3d%221%22'
     if country_code is not None:
@@ -94,7 +94,8 @@ class Bing:
             url = generate_url(query, str(start), recent, country_code)
             if _url is None:
                 _url = url # Remembers the first url that is generated
-            soup = BeautifulSoup(requests.get(url).text, "html.parser")
+            session = HTMLSession()
+            soup = BeautifulSoup(session.get(url).html.html, "html.parser")
             new_results = Bing.scrape_search_result(soup)
             results += new_results
             start += len(new_results)
@@ -178,7 +179,8 @@ class Bing:
             url = generate_news_url(query, str(start), recent, country_code)
             if _url is None:
                 _url = url # Remembers the first url that is generated
-            soup = BeautifulSoup(requests.get(url).text, "html.parser")
+            session = HTMLSession()
+            soup = BeautifulSoup(session.get(url).html.html, "html.parser")
             new_results = Bing.scrape_news_result(soup)
             results += new_results
             start += len(new_results)
