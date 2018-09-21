@@ -93,7 +93,7 @@ class Google:
         results = Google.scrape_search_result(soup)
         related_queries = Google.scrape_related(soup)
 
-        raw_total_results = soup.find('div', attrs = {'class' : 'sd'}).string
+        raw_total_results = soup.find('div', attrs = {'class' : 'resultStats'}).string
         total_results = 0
         if raw_total_results is not None:
             for i in raw_total_results:
@@ -121,7 +121,7 @@ class Google:
         results = []
         
         for result in raw_results:
-            link = result.find('a').get('href')[7:]
+            link = result.find('a').get('href')
 
             raw_link_text = result.find('a')
             link_text = strip_tags(str(raw_link_text))

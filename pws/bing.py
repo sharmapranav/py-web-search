@@ -81,24 +81,24 @@ def try_cast_int(s):
 
 class Bing:
     @staticmethod
-    def search(query, num=10, start=0, sleep=1, recent=None, country_code=None):
+    def search(query, num=10, start=1, sleep=1, recent=None, country_code=None):
         results = []
-        _start = start # Remembers the initial value of start for later use
-        _url = None
+        new_start = start # Remembers the initial value of start for later use
+        url = None
         related_queries = []
         total_results = None
-
+        
         while len(results) < num:
             # Prevents loading too many pages too soon
             wait(sleep)
-            url = generate_url(query, str(start), recent, country_code)
-            if _url is None:
-                _url = url # Remembers the first url that is generated
+            new_url = generate_url(query, str(new_start), recent, country_code)
+            if url is None:
+                url = new_url # Remembers the first url that is generated
             session = HTMLSession()
             soup = BeautifulSoup(session.get(url).html.html, "html.parser")
             new_results = Bing.scrape_search_result(soup)
             results += new_results
-            start += len(new_results)
+            new_start += len(new_results)
             if total_results is None:
                 raw_total_results = soup.find('span', attrs = {'class' : 'sb_count'})
                 total_results = 0
@@ -114,13 +114,14 @@ class Bing:
             if related_queries == []:
                 related_queries = Bing.scrape_related(soup)
 
+        # Strip extra results
         results = results[:num]
 
         temp = {'results' : results,
-                'url' : _url,
+                'url' : url,
                 'expected_num' : num,
-                'received_num' : start,
-                'start' : _start,
+                'received_num' : new_start,
+                'start' : start,
                 'search_engine' : 'bing',
                 'related_queries' : related_queries,
                 'total_results' : total_results,
@@ -169,27 +170,27 @@ class Bing:
         return results
 
     @staticmethod
-    def search_news(query, num=10, start=0, sleep=1, recent=None, country_code=None):
+    def search_news(query, num=10, start=1, sleep=1, recent=None, country_code=None):
         results = []
-        _start = start # Remembers the initial value of start for later use
-        _url = None
+        new_start = start # Remembers the initial value of start for later use
+        url = None
         while len(results) < num:
             # Prevents loading too many pages too soon
             wait(sleep)
-            url = generate_news_url(query, str(start), recent, country_code)
-            if _url is None:
-                _url = url # Remembers the first url that is generated
+            new_url = generate_news_url(query, str(new_start), recent, country_code)
+            if url is None:
+                url = new_url # Remembers the first url that is generated
             session = HTMLSession()
             soup = BeautifulSoup(session.get(url).html.html, "html.parser")
             new_results = Bing.scrape_news_result(soup)
             results += new_results
-            start += len(new_results)
+            new_start += len(new_results)
         results = results[:num]
 
         temp = {'results' : results,
-                'url' : _url,
+                'url' : url,
                 'num' : num,
-                'start' : _start,
+                'start' : start,
                 'search_engine' : 'bing',
                 'country_code': country_code,
         }
